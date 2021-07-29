@@ -7,12 +7,18 @@ describe('Cypress basics', () => {
     // const title = cy.title();
     // console.log(title);
 
-    cy.pause();
+    // cy.pause();
 
     cy.title().should('be.equal', 'Campo de Treinamento');
     cy.title().should('contain', 'Campo');
 
-    cy.title().should('be.equal', 'Campo de Treinamento').and('contain', 'Campo de Treinamento');
+    cy.title()
+      .should('be.equal', 'Campo de Treinamento')
+      .and('contain', 'Campo de Treinamento');
+
+    cy.title().should((title) => {
+      console.log(title);
+    });
   });
 
   it('Should find and interact with an element', () => {
