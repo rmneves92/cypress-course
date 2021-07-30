@@ -46,7 +46,7 @@ describe('Esperas...', () => {
     cy.get('#buttonCount').click().click().should('have.value', '111');
   });
 
-  it.only('Should vs Then', () => {
+  it('Should vs Then', () => {
     cy.get('#buttonListDOM').then(($el) => {
       //   console.log($el);
       expect($el).to.have.length(1);
