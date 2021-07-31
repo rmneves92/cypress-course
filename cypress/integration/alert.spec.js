@@ -9,11 +9,13 @@ describe('Work with alerts', () => {
     cy.reload();
   });
 
-  it('Alert', () => {
-    cy.get('#alert').click();
-    cy.on('window:alert', (msg) => {
-      expect(msg).to.be.equal('Alert Simples');
-    });
+  it.only('Alert', () => {
+    // cy.get('#alert').click();
+    // cy.on('window:alert', (msg) => {
+    //   expect(msg).to.be.equal('Alert Simples');
+    // });
+
+    cy.clickAlert('#alert', 'Alert Simples');
   });
 
   //TODO: fix test
@@ -28,11 +30,11 @@ describe('Work with alerts', () => {
   //   });
 
   it('Confirm', () => {
-    cy.on('window:confirm', (msg) => {
+    cy.on('window:confirm', msg => {
       expect(msg).to.be.equal('Confirm Simples');
     });
 
-    cy.on('window:alert', (msg) => {
+    cy.on('window:alert', msg => {
       expect(msg).to.be.equal('Confirmado');
     });
 
@@ -40,12 +42,12 @@ describe('Work with alerts', () => {
   });
 
   it('Deny', () => {
-    cy.on('window:confirm', (msg) => {
+    cy.on('window:confirm', msg => {
       expect(msg).to.be.equal('Confirm Simples');
       return false;
     });
 
-    cy.on('window:alert', (msg) => {
+    cy.on('window:alert', msg => {
       expect(msg).to.be.equal('Negado');
     });
 
@@ -53,15 +55,15 @@ describe('Work with alerts', () => {
   });
 
   it('Prompt', () => {
-    cy.window().then((win) => {
+    cy.window().then(win => {
       cy.stub(win, 'prompt').returns('42');
     });
 
-    cy.on('window:prompt', (msg) => {
+    cy.on('window:prompt', msg => {
       expect(msg).to.be.equal('Era 42?');
     });
 
-    cy.on('window:alert', (msg) => {
+    cy.on('window:alert', msg => {
       expect(msg).to.be.equal(':D');
     });
 
