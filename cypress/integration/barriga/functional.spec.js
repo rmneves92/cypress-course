@@ -1,6 +1,7 @@
 /// <reference types="cypress" />
 
 import loc from '../../support/locators';
+import '../../support/commandsAccounts';
 
 describe('Should test at a functional level', () => {
   before(() => {
@@ -9,16 +10,14 @@ describe('Should test at a functional level', () => {
   });
 
   it('Should create a new account', () => {
-    cy.get(loc.MENU.SETTINGS).click();
-    cy.get(loc.MENU.ACCOUNTS).click();
-    cy.get(loc.ACCOUNTS.NAME).type('Conta de teste');
-    cy.get(loc.ACCOUNTS.BTN_SAVE).click();
+    cy.accessAccountMenu();
+    cy.insertAccount('Conta de teste');
     cy.get(loc.MESSAGE).should('contain', 'Conta inserida com sucesso');
   });
 
   it('Should update an account', () => {
-    cy.get(loc.MENU.SETTINGS).click();
-    cy.get(loc.MENU.ACCOUNTS).click();
+    cy.accessAccountMenu();
+
     cy.xpath(loc.ACCOUNTS.XP_BTN_UPDATE).click();
     cy.get(loc.ACCOUNTS.NAME).clear();
     cy.get(loc.ACCOUNTS.NAME).type('Conta alterada');
