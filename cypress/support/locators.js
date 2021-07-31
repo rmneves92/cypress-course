@@ -5,14 +5,35 @@ const locators = {
     BTN_LOGIN: '.btn',
   },
   MENU: {
+    HOME: '[data-test=menu-home]',
     SETTINGS: '[data-test=menu-settings]',
     ACCOUNTS: '[href="/contas"]',
     RESET: '[href="/reset"]',
+    TRANSACTION: '[data-test=menu-movimentacao]',
   },
   ACCOUNTS: {
     NAME: '[data-test=nome]',
     BTN_SAVE: '.btn',
-    XP_BTN_UPDATE: "//table//td[contains(., 'Conta de teste')]/..//i[@class='far fa-edit']",
+    FN_XP_BTN_UPDATE: name => `//table//td[contains(., '${name}')]/..//i[@class='far fa-edit']`,
+  },
+
+  TRANSACTION: {
+    DESCRIPTION: '[data-test=descricao]',
+    VALUE: '[data-test=valor]',
+    INVOLVED: '[data-test=envolvido]',
+    ACCOUNT: '[data-test=conta]',
+    STATUS: '[data-test=status]',
+    BTN_SAVE: '.btn-primary',
+  },
+
+  STATEMENT: {
+    LINES: '.list-group > li',
+    FN_XP_QUERY_ELEMENT: (desc, value) =>
+      `//span[contains(., '${desc}')]/following-sibling::small[contains(., ${value})]`,
+  },
+
+  BALANCE: {
+    FN_XP_BALANCE_ACCOUNT: name => `//td[contains(., '${name}')]/../td[2]`,
   },
 
   MESSAGE: '.toast-message',
