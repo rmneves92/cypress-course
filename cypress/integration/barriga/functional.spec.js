@@ -1,5 +1,7 @@
 /// <reference types="cypress" />
 
+import loc from '../../support/locators';
+
 describe('Should test at a functional level', () => {
   before(() => {
     cy.visit('https://barrigareact.wcaquino.me');
@@ -7,30 +9,30 @@ describe('Should test at a functional level', () => {
     cy.get('[data-test=email]').clear();
     cy.get('[data-test=passwd]').clear();
 
-    cy.get('[data-test=email]').type('rafa.mneves@hotmail.com');
-    cy.get('[data-test=passwd]').type('Rafa@Teste49');
-    cy.get('.btn').click();
-    cy.get('.toast-message').should('contain', 'Bem vindo');
+    cy.get(loc.LOGIN.USER).type('rafa.mneves@hotmail.com');
+    cy.get(loc.LOGIN.PASSWORD).type('Rafa@Teste49');
+    cy.get(loc.LOGIN.BTN_LOGIN).click();
+    cy.get(loc.MESSAGE).should('contain', 'Bem vindo');
 
-    cy.get('[data-test=menu-settings]').click();
-    cy.get('[href="/reset"]').click();
+    cy.get(loc.MENU.SETTINGS).click();
+    cy.get(loc.MENU.RESET).click();
   });
 
   it('Should create a new account', () => {
-    cy.get('[data-test=menu-settings]').click();
-    cy.get('[href="/contas"]').click();
-    cy.get('[data-test=nome]').type('Conta de teste');
-    cy.get('.btn').click();
-    cy.get('.toast-message').should('contain', 'Conta inserida com sucesso');
+    cy.get(loc.MENU.SETTINGS).click();
+    cy.get(loc.MENU.ACCOUNTS).click();
+    cy.get(loc.ACCOUNTS.NAME).type('Conta de teste');
+    cy.get(loc.ACCOUNTS.BTN_SAVE).click();
+    cy.get(loc.MESSAGE).should('contain', 'Conta inserida com sucesso');
   });
 
   it('Should update an account', () => {
-    cy.get('[data-test=menu-settings]').click();
-    cy.get('[href="/contas"]').click();
-    cy.xpath("//table//td[contains(., 'Conta de teste')]/..//i[@class='far fa-edit']").click();
-    cy.get('[data-test=nome]').clear();
-    cy.get('[data-test=nome]').type('Conta alterada');
-    cy.get('.btn').click();
-    cy.get('.toast-message').should('contain', 'Conta atualizada com sucesso');
+    cy.get(loc.MENU.SETTINGS).click();
+    cy.get(loc.MENU.ACCOUNTS).click();
+    cy.xpath(loc.ACCOUNTS.XP_BTN_UPDATE).click();
+    cy.get(loc.ACCOUNTS.NAME).clear();
+    cy.get(loc.ACCOUNTS.NAME).type('Conta alterada');
+    cy.get(loc.ACCOUNTS.BTN_SAVE).click();
+    cy.get(loc.MESSAGE).should('contain', 'Conta atualizada com sucesso');
   });
 });
