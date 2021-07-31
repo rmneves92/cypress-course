@@ -9,6 +9,11 @@ describe('Should test at a functional level', () => {
     cy.resetApp();
   });
 
+  beforeEach(() => {
+    cy.get(loc.MENU.HOME).click();
+    cy.resetApp();
+  });
+
   it('Should create a new account', () => {
     cy.accessMenuAccount();
     cy.insertAccount('Conta de teste');
@@ -18,7 +23,7 @@ describe('Should test at a functional level', () => {
   it('Should update an account', () => {
     cy.accessMenuAccount();
 
-    cy.xpath(loc.ACCOUNTS.FN_XP_BTN_UPDATE('Conta de teste')).click();
+    cy.xpath(loc.ACCOUNTS.FN_XP_BTN_UPDATE('Conta para alterar')).click();
     cy.get(loc.ACCOUNTS.NAME).clear();
     cy.get(loc.ACCOUNTS.NAME).type('Conta alterada');
     cy.get(loc.ACCOUNTS.BTN_SAVE).click();
@@ -27,16 +32,17 @@ describe('Should test at a functional level', () => {
 
   it('Should not create an account with same name', () => {
     cy.accessMenuAccount();
-    cy.insertAccount('Conta para alterar');
+    cy.insertAccount('Conta mesmo nome');
+    cy.get(loc.ACCOUNTS.BTN_SAVE).click();
     cy.get(loc.MESSAGE).should('contain', 'code 400');
   });
 
   it('Should create a transaction', () => {
     cy.get(loc.MENU.TRANSACTION).click();
     cy.get(loc.TRANSACTION.DESCRIPTION).type('Descrição teste');
-    cy.get(loc.TRANSACTION.VALUE).type('123');
+    cy.get(loc.TRANSACTION.VALUE).type('123', { force: true });
     cy.get(loc.TRANSACTION.INVOLVED).type('Inter');
-    cy.get(loc.TRANSACTION.ACCOUNT).select('Conta alterada');
+    cy.get(loc.TRANSACTION.ACCOUNT).select('Conta com movimentacao');
     cy.get(loc.TRANSACTION.STATUS).click();
     cy.get(loc.TRANSACTION.BTN_SAVE).click();
     cy.get(loc.MESSAGE).should('contain', 'sucesso');
@@ -47,6 +53,27 @@ describe('Should test at a functional level', () => {
 
   it('Should get balance', () => {
     cy.get(loc.MENU.HOME).click();
-    cy.xpath(loc.BALANCE.FN_XP_BALANCE_ACCOUNT('Conta alterada')).should('contain', '123,00');
+    cy.xpath(loc.BALANCE.FN_XP_BALANCE_ACCOUNT('Conta para saldo')).should('contain', '534,00');
+
+    cy.get(loc.MENU.STATEMENT).click();
+    cy.xpath(loc.STATEMENT.FN_XP_EDIT_ELEMENT('Movimentacao 1, calculo saldo')).click();
+
+    // cy.wait(1000);
+    cy.get(loc.TRANSACTION.DESCRIPTION).should('have.value', 'Movimentacao 1, calculo saldo');
+
+    cy.get(loc.TRANSACTION.STATUS).click();
+    cy.get(loc.TRANSACTION.BTN_SAVE).click();
+    cy.get(loc.MESSAGE).should('contain', 'sucesso');
+
+    cy.wait(1000);
+
+    cy.get(loc.MENU.HOME).click();
+    cy.xpath(loc.BALANCE.FN_XP_BALANCE_ACCOUNT('Conta para saldo')).should('contain', '4.034,00');
+  });
+
+  it('Should remove a transaction', () => {
+    cy.get(loc.MENU.STATEMENT).click();
+    cy.xpath(loc.STATEMENT.FN_XP_REMOVE_ELEMENT('Movimentacao para exclusao')).click();
+    cy.get(loc.MESSAGE).should('contain', 'sucesso');
   });
 });
