@@ -1,6 +1,6 @@
 import loc from './locators';
 
-Cypress.Commands.add('accessAccountMenu', () => {
+Cypress.Commands.add('accessMenuAccount', () => {
   cy.get(loc.MENU.SETTINGS).click();
   cy.get(loc.MENU.ACCOUNTS).click();
 });
