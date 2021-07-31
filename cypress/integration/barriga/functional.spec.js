@@ -4,18 +4,8 @@ import loc from '../../support/locators';
 
 describe('Should test at a functional level', () => {
   before(() => {
-    cy.visit('https://barrigareact.wcaquino.me');
-
-    cy.get('[data-test=email]').clear();
-    cy.get('[data-test=passwd]').clear();
-
-    cy.get(loc.LOGIN.USER).type('rafa.mneves@hotmail.com');
-    cy.get(loc.LOGIN.PASSWORD).type('Rafa@Teste49');
-    cy.get(loc.LOGIN.BTN_LOGIN).click();
-    cy.get(loc.MESSAGE).should('contain', 'Bem vindo');
-
-    cy.get(loc.MENU.SETTINGS).click();
-    cy.get(loc.MENU.RESET).click();
+    cy.login('rafa.mneves@hotmail.com', 'Rafa@Teste49');
+    cy.resetApp();
   });
 
   it('Should create a new account', () => {
