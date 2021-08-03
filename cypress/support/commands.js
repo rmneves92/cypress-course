@@ -76,3 +76,27 @@ Cypress.Commands.add('resetRest', () => {
       .should('be.equal', 200);
   });
 });
+
+Cypress.Commands.add('getAccountByName', name => {
+  cy.getToken('rafa.mneves@hotmail.com', 'Rafa@Teste49').then(token => {
+    cy.request({
+      method: 'GET',
+      url: '/contas',
+      headers: { Authorization: `JWT ${token}` },
+      qs: {
+        nome: name,
+      },
+    }).then(res => res.body[0].id);
+  });
+});
+
+Cypress.Commands.add('getTransactionByDescription', description => {
+  cy.getToken('rafa.mneves@hotmail.com', 'Rafa@Teste49').then(token => {
+    cy.request({
+      url: '/transacoes',
+      method: 'GET',
+      qs: { descricao: description },
+      headers: { Authorization: `JWT ${token}` },
+    }).then(res => res.body[0]);
+  });
+});
