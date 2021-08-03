@@ -62,7 +62,10 @@ Cypress.Commands.add('getToken', (user, passwd) => {
   })
     .its('body.token')
     .should('not.be.empty')
-    .then(token => token);
+    .then(token => {
+      Cypress.env('token', token);
+      return token;
+    });
 });
 
 Cypress.Commands.add('resetRest', () => {
@@ -99,4 +102,17 @@ Cypress.Commands.add('getTransactionByDescription', description => {
       headers: { Authorization: `JWT ${token}` },
     }).then(res => res.body[0]);
   });
+});
+
+// Sobrescreve um método
+Cypress.Commands.overwrite('request', (originalFn, ...options) => {
+  if (options.length === 1) {
+    if (Cypress.env('token')) {
+      options[0].headers = {
+        Authorization: `JWT ${Cypress.env('token')}`,
+      };
+    }
+  }
+
+  return originalFn(...options);
 });

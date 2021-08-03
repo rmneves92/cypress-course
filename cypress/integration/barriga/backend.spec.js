@@ -1,11 +1,8 @@
 /// <reference types="cypress" />
 
 describe('Should test at a functional level', () => {
-  let token;
   before(() => {
-    cy.getToken('rafa.mneves@hotmail.com', 'Rafa@Teste49').then(tkn => {
-      token = tkn;
-    });
+    cy.getToken('rafa.mneves@hotmail.com', 'Rafa@Teste49');
   });
 
   beforeEach(() => {
@@ -16,7 +13,6 @@ describe('Should test at a functional level', () => {
     cy.request({
       url: '/contas',
       method: 'POST',
-      headers: { Authorization: `JWT ${token}` },
       body: {
         nome: 'Conta via rest',
       },
@@ -34,7 +30,6 @@ describe('Should test at a functional level', () => {
       cy.request({
         url: `/contas/${accountId}`,
         method: 'PUT',
-        headers: { Authorization: `JWT ${token}` },
         body: {
           nome: 'Conta alterada via rest',
         },
@@ -48,7 +43,6 @@ describe('Should test at a functional level', () => {
     cy.request({
       url: '/contas',
       method: 'POST',
-      headers: { Authorization: `JWT ${token}` },
       body: {
         nome: 'Conta mesmo nome',
       },
@@ -66,7 +60,6 @@ describe('Should test at a functional level', () => {
       cy.request({
         method: 'POST',
         url: '/transacoes',
-        headers: { Authorization: `JWT ${token}` },
         body: {
           conta_id: accountId,
           data_pagamento: Cypress.moment().add({ days: 1 }).format('DD/MM/YYYY'),
@@ -84,11 +77,10 @@ describe('Should test at a functional level', () => {
     cy.get('@response').its('body.id').should('exist');
   });
 
-  it.only('Should get balance', () => {
+  it('Should get balance', () => {
     cy.request({
       url: '/saldo',
       method: 'GET',
-      headers: { Authorization: `JWT ${token}` },
     }).then(res => {
       let accountBalance = null;
       res.body.forEach(c => {
@@ -102,7 +94,6 @@ describe('Should test at a functional level', () => {
       cy.request({
         url: `/transacoes/${transaction.id}`,
         method: 'PUT',
-        headers: { Authorization: `JWT ${token}` },
         body: {
           status: true,
           data_transacao: Cypress.moment(transaction.data_transacao).format('DD/MM/YYYY'),
@@ -120,7 +111,6 @@ describe('Should test at a functional level', () => {
     cy.request({
       url: '/saldo',
       method: 'GET',
-      headers: { Authorization: `JWT ${token}` },
     }).then(res => {
       let accountBalance = null;
       res.body.forEach(c => {
@@ -137,7 +127,6 @@ describe('Should test at a functional level', () => {
         cy.request({
           url: `/transacoes/${transaction.id}`,
           method: 'DELETE',
-          headers: { Authorization: `JWT ${token}` },
         });
       })
       .its('status')
