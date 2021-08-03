@@ -1,7 +1,12 @@
 /// <reference types="cypress" />
 
 describe('Should test at a functional level', () => {
-  before(() => {});
+  let token;
+  before(() => {
+    cy.getToken('rafa.mneves@hotmail.com', 'Rafa@Teste49').then(tkn => {
+      token = tkn;
+    });
+  });
 
   beforeEach(() => {
     // cy.get(loc.MENU.HOME).click();
@@ -10,16 +15,21 @@ describe('Should test at a functional level', () => {
 
   it('Should create an account', () => {
     cy.request({
+      url: 'https://barrigarest.wcaquino.me/contas',
       method: 'POST',
-      url: 'https://barrigarest.wcaquino.me/signin',
-      body: {
-        email: 'rafa.mneves@hotmail.com',
-        redirecionar: false,
-        senha: 'Rafa@Teste49',
+      headers: {
+        Authorization: `JWT ${token}`,
       },
-    })
-      .its('body.token')
-      .should('not.be.empty');
+      body: {
+        nome: 'Conta via rest',
+      },
+    }).as('response');
+
+    cy.get('@response').then(res => {
+      expect(res.status).to.be.equal(201);
+      expect(res.body).to.have.property('id');
+      expect(res.body).to.have.property('nome', 'Conta via rest');
+    });
   });
 
   it('Should update an account', () => {});
