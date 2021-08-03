@@ -9,17 +9,14 @@ describe('Should test at a functional level', () => {
   });
 
   beforeEach(() => {
-    // cy.get(loc.MENU.HOME).click();
-    // cy.resetApp();
+    cy.resetRest();
   });
 
   it('Should create an account', () => {
     cy.request({
-      url: 'https://barrigarest.wcaquino.me/contas',
+      url: '/contas',
       method: 'POST',
-      headers: {
-        Authorization: `JWT ${token}`,
-      },
+      headers: { Authorization: `JWT ${token}` },
       body: {
         nome: 'Conta via rest',
       },
