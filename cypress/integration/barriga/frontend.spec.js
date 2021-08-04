@@ -244,4 +244,83 @@ describe('Should test at a functional level', () => {
     });
     cy.get(loc.MESSAGE).should('contain', 'Conta inserida com sucesso');
   });
+
+  it.only('Should test colors ', () => {
+    cy.route({
+      method: 'GET',
+      url: '/extrato/**',
+      response: [
+        {
+          conta: 'Conta para movimentacoes',
+          id: 674325,
+          descricao: 'Receita paga',
+          envolvido: 'AAA',
+          observacao: null,
+          tipo: 'REC',
+          data_transacao: '2021-08-04T03:00:00.000Z',
+          data_pagamento: '2021-08-04T03:00:00.000Z',
+          valor: '-1500.00',
+          status: true,
+          conta_id: 726587,
+          usuario_id: 23948,
+          transferencia_id: null,
+          parcelamento_id: null,
+        },
+        {
+          conta: 'Conta com movimentacao',
+          id: 674326,
+          descricao: 'Receita pendente',
+          envolvido: 'BBB',
+          observacao: null,
+          tipo: 'REC',
+          data_transacao: '2021-08-04T03:00:00.000Z',
+          data_pagamento: '2021-08-04T03:00:00.000Z',
+          valor: '-1500.00',
+          status: false,
+          conta_id: 726588,
+          usuario_id: 23948,
+          transferencia_id: null,
+          parcelamento_id: null,
+        },
+        {
+          conta: 'Conta para saldo',
+          id: 674327,
+          descricao: 'Despesa paga',
+          envolvido: 'CCC',
+          observacao: null,
+          tipo: 'DESP',
+          data_transacao: '2021-08-04T03:00:00.000Z',
+          data_pagamento: '2021-08-04T03:00:00.000Z',
+          valor: '3500.00',
+          status: true,
+          conta_id: 726589,
+          usuario_id: 23948,
+          transferencia_id: null,
+          parcelamento_id: null,
+        },
+        {
+          conta: 'Conta para saldo',
+          id: 674328,
+          descricao: 'Despensa pendente',
+          envolvido: 'DDD',
+          observacao: null,
+          tipo: 'DESP',
+          data_transacao: '2021-08-04T03:00:00.000Z',
+          data_pagamento: '2021-08-04T03:00:00.000Z',
+          valor: '-1000.00',
+          status: false,
+          conta_id: 726589,
+          usuario_id: 23948,
+          transferencia_id: null,
+          parcelamento_id: null,
+        },
+      ],
+    });
+
+    cy.get(loc.MENU.STATEMENT).click();
+    cy.xpath(loc.STATEMENT.FN_XP_LINE('Receita paga')).should('have.class', 'receitaPaga');
+    cy.xpath(loc.STATEMENT.FN_XP_LINE('Receita pendente')).should('have.class', 'receitaPendente');
+    cy.xpath(loc.STATEMENT.FN_XP_LINE('Despesa paga')).should('have.class', 'despesaPaga');
+    cy.xpath(loc.STATEMENT.FN_XP_LINE('Despesa pendente')).should('have.class', 'despesaPendente');
+  });
 });

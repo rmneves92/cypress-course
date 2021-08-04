@@ -33,6 +33,7 @@ const locators = {
       `//span[contains(., '${desc}')]/following-sibling::small[contains(., ${value})]`,
     FN_XP_REMOVE_ELEMENT: account => `//span[contains(., '${account}')]/../../..//i[@class='far fa-trash-alt']`,
     FN_XP_EDIT_ELEMENT: account => `//span[contains(., '${account}')]/../../..//i[@class='fas fa-edit']`,
+    FN_XP_LINE: desc => `//span[contains(., '${desc}')]/../../../..`,
   },
 
   BALANCE: {
