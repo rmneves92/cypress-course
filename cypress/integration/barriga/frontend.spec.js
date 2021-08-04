@@ -2,59 +2,59 @@
 
 import loc from '../../support/locators';
 import '../../support/commandsAccounts';
+import buildEnv from '../../support/buildEnv';
 
 describe('Should test at a functional level', () => {
   after(() => {
     cy.clearLocalStorage();
   });
 
-  before(() => {
-    cy.server();
+  beforeEach(() => {
+    buildEnv();
+    cy.login('teste@email.com', 'Senha errada');
+
+    cy.get(loc.MENU.HOME).click();
+  });
+
+  it('Should create an account', () => {
     cy.route({
       method: 'POST',
-      url: '/signin',
-      response: {
-        id: 1000,
-        nome: 'Usuario falso',
-        token: 'Uma string muito grande que nao deveria ser aceita mas na verdade, vai',
-      },
-    }).as('signin');
+      url: '/contas',
+      response: { id: 3, nome: 'Conta de teste', visivel: true, usuario_id: 1 },
+    }).as('saveConta');
 
+    cy.accessMenuAccount();
+
+    // Redefinindo a rota...
     cy.route({
       method: 'GET',
-      url: '/saldo',
+      url: '/contas',
       response: [
-        {
-          conta_id: 999,
-          conta: 'Carteira',
-          saldo: '100.00',
-        },
-        {
-          conta_id: 9909,
-          conta: 'Banco',
-          saldo: '10000000.00',
-        },
+        { id: 1, nome: 'Carteira', visivel: true, usuario_id: 1 },
+        { id: 2, nome: 'Banco', visivel: true, usuario_id: 1 },
+        { id: 3, nome: 'Conta de teste', visivel: true, usuario_id: 1 },
       ],
-    }).as('saldo');
+    }).as('contasSave');
 
-    cy.login('teste@email.com', 'Senha errada');
-  });
-
-  beforeEach(() => {
-    cy.get(loc.MENU.HOME).click();
-    cy.resetApp();
-  });
-
-  it('Should create a new account', () => {
-    cy.accessMenuAccount();
     cy.insertAccount('Conta de teste');
     cy.get(loc.MESSAGE).should('contain', 'Conta inserida com sucesso');
   });
 
   it('Should update an account', () => {
+    cy.route({
+      method: 'PUT',
+      url: '/contas/**',
+      response: {
+        id: 1,
+        nome: 'Conta alterada',
+        visivel: true,
+        usuario_id: 1,
+      },
+    });
+
     cy.accessMenuAccount();
 
-    cy.xpath(loc.ACCOUNTS.FN_XP_BTN_UPDATE('Conta para alterar')).click();
+    cy.xpath(loc.ACCOUNTS.FN_XP_BTN_UPDATE('Carteira')).click();
     cy.get(loc.ACCOUNTS.NAME).clear();
     cy.get(loc.ACCOUNTS.NAME).type('Conta alterada');
     cy.get(loc.ACCOUNTS.BTN_SAVE).click();
