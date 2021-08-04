@@ -16,6 +16,19 @@ describe('Should test at a functional level', () => {
     cy.get(loc.MENU.HOME).click();
   });
 
+  it('Should test the responsiveness', () => {
+    cy.get('[data-test=menu-home').should('exist').and('be.visible');
+
+    cy.viewport(500, 700);
+    cy.get('[data-test=menu-home').should('exist').and('be.not.visible');
+
+    cy.viewport('iphone-5');
+    cy.get('[data-test=menu-home').should('exist').and('be.not.visible');
+
+    cy.viewport('ipad-2');
+    cy.get('[data-test=menu-home').should('exist').and('be.visible');
+  });
+
   it('Should create an account', () => {
     cy.route({
       method: 'POST',
@@ -208,7 +221,7 @@ describe('Should test at a functional level', () => {
     cy.get(loc.MESSAGE).should('contain', 'sucesso');
   });
 
-  it.only('Should create an account', () => {
+  it('Should create an account', () => {
     const reqStub = cy.stub();
 
     cy.route({
@@ -245,7 +258,7 @@ describe('Should test at a functional level', () => {
     cy.get(loc.MESSAGE).should('contain', 'Conta inserida com sucesso');
   });
 
-  it.only('Should test colors ', () => {
+  it('Should test colors ', () => {
     cy.route({
       method: 'GET',
       url: '/extrato/**',
@@ -301,7 +314,7 @@ describe('Should test at a functional level', () => {
         {
           conta: 'Conta para saldo',
           id: 674328,
-          descricao: 'Despensa pendente',
+          descricao: 'Despesa pendente',
           envolvido: 'DDD',
           observacao: null,
           tipo: 'DESP',

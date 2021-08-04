@@ -21,7 +21,7 @@ describe('Work with basic elements', () => {
     cy.get('#resultado > span').should('contain', '10/04/2012');
   });
 
-  it.only('Goes to the future', () => {
+  it('Goes to the future', () => {
     cy.get('#buttonTimePassed').click();
     cy.get('#resultado > span').should('contain', '16276');
     cy.get('#resultado > span').invoke('text').should('gt', 1627698375176);

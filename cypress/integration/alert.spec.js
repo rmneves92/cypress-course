@@ -9,7 +9,7 @@ describe('Work with alerts', () => {
     cy.reload();
   });
 
-  it.only('Alert', () => {
+  it('Alert', () => {
     // cy.get('#alert').click();
     // cy.on('window:alert', (msg) => {
     //   expect(msg).to.be.equal('Alert Simples');
