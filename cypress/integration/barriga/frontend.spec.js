@@ -76,7 +76,7 @@ describe('Should test at a functional level', () => {
     cy.get(loc.MESSAGE).should('contain', 'code 400');
   });
 
-  it.only('Should create a transaction', () => {
+  it('Should create a transaction', () => {
     cy.route({
       method: 'POST',
       url: '/transacoes',
@@ -117,8 +117,50 @@ describe('Should test at a functional level', () => {
   });
 
   it('Should get balance', () => {
+    cy.route({
+      method: 'GET',
+      url: '/transacoes/**',
+      response: {
+        conta: 'Conta para saldo',
+        id: 674327,
+        descricao: 'Movimentacao 1, calculo saldo',
+        envolvido: 'CCC',
+        observacao: null,
+        tipo: 'REC',
+        data_transacao: '2021-08-04T03:00:00.000Z',
+        data_pagamento: '2021-08-04T03:00:00.000Z',
+        valor: '3500.00',
+        status: false,
+        conta_id: 726589,
+        usuario_id: 23948,
+        transferencia_id: null,
+        parcelamento_id: null,
+      },
+    });
+
+    cy.route({
+      method: 'PUT',
+      url: '/transacoes/**',
+      response: {
+        conta: 'Conta para saldo',
+        id: 674327,
+        descricao: 'Movimentacao 1, calculo saldo',
+        envolvido: 'CCC',
+        observacao: null,
+        tipo: 'REC',
+        data_transacao: '2021-08-04T03:00:00.000Z',
+        data_pagamento: '2021-08-04T03:00:00.000Z',
+        valor: '3500.00',
+        status: false,
+        conta_id: 726589,
+        usuario_id: 23948,
+        transferencia_id: null,
+        parcelamento_id: null,
+      },
+    });
+
     cy.get(loc.MENU.HOME).click();
-    cy.xpath(loc.BALANCE.FN_XP_BALANCE_ACCOUNT('Conta para saldo')).should('contain', '534,00');
+    cy.xpath(loc.BALANCE.FN_XP_BALANCE_ACCOUNT('Carteira')).should('contain', '100,00');
 
     cy.get(loc.MENU.STATEMENT).click();
     cy.xpath(loc.STATEMENT.FN_XP_EDIT_ELEMENT('Movimentacao 1, calculo saldo')).click();
@@ -130,15 +172,76 @@ describe('Should test at a functional level', () => {
     cy.get(loc.TRANSACTION.BTN_SAVE).click();
     cy.get(loc.MESSAGE).should('contain', 'sucesso');
 
+    cy.route({
+      method: 'GET',
+      url: '/saldo',
+      response: [
+        {
+          conta_id: 999,
+          conta: 'Carteira',
+          saldo: '4034.00',
+        },
+        {
+          conta_id: 9909,
+          conta: 'Banco',
+          saldo: '10000000.00',
+        },
+      ],
+    }).as('saldoFinal');
+
     cy.wait(1000);
 
     cy.get(loc.MENU.HOME).click();
-    cy.xpath(loc.BALANCE.FN_XP_BALANCE_ACCOUNT('Conta para saldo')).should('contain', '4.034,00');
+    cy.xpath(loc.BALANCE.FN_XP_BALANCE_ACCOUNT('Carteira')).should('contain', '4.034,00');
   });
 
   it('Should remove a transaction', () => {
+    cy.route({
+      method: 'DELETE',
+      url: '/transacoes/**',
+      response: {},
+      status: 204,
+    }).as('del');
+
     cy.get(loc.MENU.STATEMENT).click();
     cy.xpath(loc.STATEMENT.FN_XP_REMOVE_ELEMENT('Movimentacao para exclusao')).click();
     cy.get(loc.MESSAGE).should('contain', 'sucesso');
+  });
+
+  it.only('Should create an account', () => {
+    const reqStub = cy.stub();
+
+    cy.route({
+      method: 'POST',
+      url: '/contas',
+      response: { id: 3, nome: 'Conta de teste', visivel: true, usuario_id: 1 },
+      // onRequest: req => {
+      //   expect(req.request.body.nome).to.be.empty;
+      //   expect(req.request.headers).to.have.property('Authorization');
+      // },
+      onRequest: reqStub,
+    }).as('saveConta');
+
+    cy.accessMenuAccount();
+
+    // Redefinindo a rota...
+    cy.route({
+      method: 'GET',
+      url: '/contas',
+      response: [
+        { id: 1, nome: 'Carteira', visivel: true, usuario_id: 1 },
+        { id: 2, nome: 'Banco', visivel: true, usuario_id: 1 },
+        { id: 3, nome: 'Conta de teste', visivel: true, usuario_id: 1 },
+      ],
+    }).as('contasSave');
+
+    cy.insertAccount('{CONTROL}');
+    // cy.wait('@saveConta').its('request.body.nome').should('not.be.empty');
+    cy.wait('@saveConta').then(() => {
+      console.log(reqStub.args[0][0]);
+      expect(reqStub.args[0][0].request.body.nome).to.be.empty;
+      expect(reqStub.args[0][0].request.headers).to.have.property('Authorization');
+    });
+    cy.get(loc.MESSAGE).should('contain', 'Conta inserida com sucesso');
   });
 });
