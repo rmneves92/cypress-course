@@ -1,6 +1,6 @@
 /// <reference types="cypress" />
 
-describe('Work with basic elements', () => {
+describe('Work with time', () => {
   before(() => {
     cy.visit('https://wcaquino.me/cypress/componentes.html');
   });
